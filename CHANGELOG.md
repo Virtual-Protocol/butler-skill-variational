@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.0.3
+
+- Deposits and withdrawals pass `--fee`, Variational's `Transfer fee` from this errand's
+  account read; the card shows it and the run never lets Variational take more. Tell the
+  owner the fee before filing. A fee read as `unknown` means no deposit or withdrawal yet.
+- A gap the size of the card's fee after a deposit or withdrawal is that fee, never missing
+  money.
+- Never write a Platforms row for Variational: nothing keeps it current.
+- Needs the server that requires `--fee` (deposits and withdrawals without it are refused
+  there; with it, an older server refuses the unknown flag).
+
 ## 2.0.2
 
 - Reads (`account`, `orders`) take no idempotency key. The server answers a key it has

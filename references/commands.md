@@ -9,7 +9,7 @@ Add `--idempotency-key <KEY>:<step>` to every one, with this errand's key (SKILL
 | Command | What the card does |
 | --- | --- |
 | `acp site variational signup` | Sets up Butler's wallet on Variational; your owner types the access code on the card (`references/setup.md`) |
-| `acp site variational deposit --amount <usdc>` | Deposits that much USDC from Butler's wallet on Arbitrum |
+| `acp site variational deposit --amount <usdc> --fee <fee>` | Deposits that much USDC from Butler's wallet on Arbitrum; `<fee>` is the account read's `Transfer fee` |
 | `acp site variational open --market <SYMBOL> --usd <n> [--leverage <1-5>] [--side long\|short]` | Opens (or adds to) a position worth `<n>` dollars at the price |
 | `acp site variational open --market <SYMBOL> --size <coins> [--leverage <1-5>] [--side long\|short]` | The same, sized in coins ("long 2 ETH" is `--size 2`) |
 | `acp site variational close --market <SYMBOL>` | Closes the whole position |
@@ -20,7 +20,7 @@ Add `--idempotency-key <KEY>:<step>` to every one, with this errand's key (SKILL
 | `acp site variational limit --market <SYMBOL> --side long\|short (--usd <n> \| --size <coins>) --price <p> [--leverage <1-5>] [--margin cross\|isolated] [--reduce-only]` | Places an order that waits for its price (`references/resting-orders.md`) |
 | `acp site variational tpsl --market <SYMBOL> [--tp <price>] [--sl <price>]` | Sets or replaces the take profit and stop loss on a held position |
 | `acp site variational cancel --market <SYMBOL> [--order <id>]` | Cancels every resting order on that market, or one |
-| `acp site variational withdraw --amount <usdc>` | Withdraws that much USDC to Butler's wallet |
+| `acp site variational withdraw --amount <usdc> --fee <fee>` | Withdraws that much USDC to Butler's wallet; `<fee>` as for a deposit |
 
 An `open` also takes:
 
@@ -45,6 +45,9 @@ An `open` also takes:
   needs. Closing the last of an isolated position returns its margin to the account.
 - **deposit** ends `not_done` with nothing moved when Butler's wallet holds less USDC on
   Arbitrum than the amount: read the wallet before filing (`SKILL.md` step 2).
+- **deposit and withdraw** need `--fee`, the `Transfer fee` this errand's account read gave;
+  without it the command is refused with nothing filed. If Variational's fee is higher when
+  the card runs, it ends `not_done` with nothing moved.
 - **withdraw** goes only to Butler's wallet, less Variational's fee. It stays `running`
   until the USDC lands in the wallet, usually within minutes.
 
