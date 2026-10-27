@@ -1,7 +1,7 @@
 ---
 name: variational
 description: Trade perps on Variational Omni from Butler's wallet - deposit, open, close, reverse, margin, limit, TP/SL, cancel, withdraw - each act a card the owner approves.
-version: 1.0.0
+version: 2.0.0
 metadata: {"butler":{"moneyMoving":true,"keywords":["variational","variational omni","omni.variational.io","trade on variational","long on variational","short on variational","variational position","close my variational","variational balance","deposit to variational","withdraw from variational","variational limit order","variational take profit","variational stop loss","cancel variational order"],"requires":{"bins":["acp","bevo-read"]}}}
 ---
 
@@ -10,30 +10,32 @@ metadata: {"butler":{"moneyMoving":true,"keywords":["variational","variational o
 Your owner names **Variational** (Omni, omni.variational.io) and wants to:
 
 - **Look** - "my Variational balance", "my positions there", "my orders": step 1, then stop.
-- **Fund** - "put 20 USDC into Variational": step 3 with `deposit`.
+- **Fund** - "put 20 USDC into Variational": steps 1 to 4 with `deposit`.
 - **Open** - "long ETH on Variational with $50 at 3x": steps 1 to 4.
 - **Close, reverse, re-margin** - "close half my SOL", "flip it", "set my margin to 30": steps 1, 3, 4.
 - **Wait for a price** - "buy ETH at 2,000", "stop loss at 2,300": steps 1, 3, 4, and
   `references/resting-orders.md`.
-- **Withdraw** - "take my money out of Variational": step 3 with `withdraw`.
+- **Withdraw** - "take my money out of Variational": steps 1, 3, 4 with `withdraw`.
+- **More than one act** - "fund it and long ETH", "close and withdraw": `references/flows.md`.
 
 Not this skill: Hyperliquid perps (`acp trade`), Papertrade, or anything your owner did
-not say is on Variational. Every act here is a card the owner approves; nothing moves
-without it. Variational is only on for some accounts: a refusal says so, and you relay it.
+not say is on Variational. Variational runs on Bevo's site rail (`acp site variational …`);
+this skill says which action fits an ask and what Variational's answers mean.
 
 ## Before you start
 
-1. **Variational is its own venue.** Its balance and positions are only in this skill's
-   reads; Butler's wallet balance and Hyperliquid positions are something else.
+1. **Variational is its own venue.** Its balance and positions are only in its own reads;
+   Butler's wallet balance and Hyperliquid positions are something else.
 2. **Figures come only from this turn's reads and the card.** An unreadable account is not
    an empty one. Never work out a liquidation price, a fee or a PnL yourself.
 3. **Leverage is 1 to 5, and 1 unless they name one.** An open sets the leverage for the
    whole market, so it re-levers a position already open there: say so.
-4. **The access code is never in chat.** The first card on a new account comes back
-   asking for it, and the owner types it on the card (`references/setup.md`). Never ask
-   for it, never repeat one they paste, and never file a sign-in or sign-up: every card
-   does both by itself.
-5. **From chat only.** A duty cannot use Variational; the server refuses it.
+4. **The access code is never in chat.** Your owner types it on the `signup` card
+   (`references/setup.md`). Never ask for it, never repeat one they paste, and never put
+   it in a command.
+5. **From chat only.** A duty is refused (`SITE_DUTY_NOT_ALLOWED`).
+6. **You never touch Omni's page.** No browser, no wallet connection, no clicks: Bevo runs
+   every step and holds the login.
 
 ### Never file an open without all three
 
@@ -49,97 +51,92 @@ without it. Variational is only on for some accounts: a refusal says so, and you
 1. [FIXED] Read the account, before any act and whenever asked:
 
    ```sh
-   bevo-read get /variational/account
+   acp site variational account --idempotency-key <KEY>
    ```
 
-   Relay it as given (`references/account.md`). `hasAccount: false` means Butler's wallet
-   has no Variational account yet: a deposit or an open sets it up (step 4's card asks for
-   the code); a close or withdrawal has nothing to act on. Each read answers at most once a
-   minute: when told to wait, wait, never loop. A failed read: say you could not check it.
-   For resting orders, read `bevo-read get /variational/orders` instead.
+   For resting orders, and those that filled or were cancelled in the last day:
+   `acp site variational orders --idempotency-key <KEY>`. Relay what it says in plain
+   words (`references/account.md`). "Butler's wallet has no Variational account yet":
+   say so, and that a deposit or an open starts with a sign-up card. A read opens a
+   browser: run it once per errand, never in a loop. `not_done` or `unknown`: say you
+   could not check it.
 
 2. [ADAPT] Match the ask to the position you just read:
    - **Open on a market they hold on the same side**: it adds to that position, and the
      leverage applies to all of it. Say so.
-   - **Open on the other side of a position they hold**: refused with nothing sent. Offer
-     `close` or `reverse` instead.
+   - **Open on the other side of a position they hold**: offer `close` or `reverse`.
    - **Close, reverse, margin, TP/SL**: only on a market they hold. `margin` needs an
      isolated position.
-   - **Withdraw**: at most `withdrawable`.
+   - **Deposit**: Butler's wallet must hold the USDC on Arbitrum. Check first with
+     `bevo-read get /user-assets --param token=USDC --param fresh=1`. If it holds less,
+     offer a bridge only from a chain that holds enough, never more than it holds; if
+     none does, say how much there is.
+   - **Withdraw**: at most what the read showed as withdrawable.
 
 3. [FIXED] File the card, once, with one key for this errand
    (`references/commands.md` has every form):
 
    ```sh
-   acp variational open --market <SYMBOL> --usd <USD> --leverage <N> --side <SIDE> --idempotency-key <KEY>
-   acp variational close --market <SYMBOL> --idempotency-key <KEY>
-   acp variational reverse --market <SYMBOL> --idempotency-key <KEY>
-   acp variational margin --market <SYMBOL> --amount <USDC> --idempotency-key <KEY>
-   acp variational limit --market <SYMBOL> --side <SIDE> --usd <USD> --price <PRICE> --leverage <N> --idempotency-key <KEY>
-   acp variational tpsl --market <SYMBOL> --tp <PRICE> --sl <PRICE> --idempotency-key <KEY>
-   acp variational cancel --market <SYMBOL> --idempotency-key <KEY>
-   acp variational deposit --amount <USDC> --idempotency-key <KEY>
-   acp variational withdraw --amount <USDC> --idempotency-key <KEY>
+   acp site variational open --market <SYMBOL> --usd <USD> --leverage <N> --side <SIDE> --idempotency-key <KEY>
+   acp site variational close --market <SYMBOL> --idempotency-key <KEY>
+   acp site variational reverse --market <SYMBOL> --idempotency-key <KEY>
+   acp site variational margin --market <SYMBOL> --amount <USDC> --idempotency-key <KEY>
+   acp site variational limit --market <SYMBOL> --side <SIDE> --usd <USD> --price <PRICE> --leverage <N> --idempotency-key <KEY>
+   acp site variational tpsl --market <SYMBOL> --tp <PRICE> --sl <PRICE> --idempotency-key <KEY>
+   acp site variational cancel --market <SYMBOL> --idempotency-key <KEY>
+   acp site variational deposit --amount <USDC> --idempotency-key <KEY>
+   acp site variational withdraw --amount <USDC> --idempotency-key <KEY>
    ```
 
-   `<SYMBOL>` is what your owner named (`ETH`, `SOL`, `XAUS`, `AAPL`); the card checks that
-   Variational lists it. `<SIDE>` is `long` or `short`. An open or limit sized in coins
-   ("long 2 ETH") takes `--size <COINS>` instead of `--usd`; a part close adds
-   `--percent <1-100>` or `--size <COINS>`. A limit, TP/SL or cancel: read
-   `references/resting-orders.md` first for its extra flags. The reply is an approval card in this chat: tell your owner what it
-   does, and to approve it in the app.
+   `<SYMBOL>` is what your owner named (`ETH`, `SOL`, `XAUS`, `AAPL`). `<SIDE>` is `long`
+   or `short`. An open or limit sized in coins takes `--size <COINS>` instead of `--usd`;
+   a part close adds `--percent <1-100>` or `--size <COINS>`. The reply is a card in this
+   chat: tell your owner what it does, and to approve it in the app.
 
-4. [FIXED] Wait for the card's outcome; never file it again to find out:
-
-   ```sh
-   bevo-read request <KEY> --route variational
-   ```
-
-   - `pending` - still with the owner: say so and stop until they come back.
-   - `signed` - approved and running (a withdrawal stays here until it lands, up to about
-     10 minutes). The chat is told when it ends.
-   - `confirmed` - done: relay `approvalOutcome.summary` and its `facts` as written.
-   - `failed` - give `approvalFailureReason` as written. "Check Variational before asking
-     again" means the result is unknown: read step 1 before filing anything.
-   - `rejected` or `expired` - nothing ran; say so.
-
-   The server also posts how a card ended in this chat; relay that, don't add to it.
+4. [FIXED] Follow it; never file it again to find out: `acp site status <KEY>`.
+   - `done` - relay the summary and facts as written. A limit or TP/SL is "placed", not
+     filled.
+   - `running` - approved and running. A withdrawal stays here until the USDC lands in
+     Butler's wallet, usually minutes. The chat is told when it ends.
+   - `not_done` saying Butler's wallet has no Variational account - file
+     `acp site variational signup --idempotency-key <NEW_KEY>`; your owner types the access
+     code on that card. Once it is `done`, file the original ask again with a new key.
+   - `unknown` - it may or may not have happened. Read step 1 before filing anything.
+   - `rejected`, `failed` or a `SITE_*` code - relay what `acp` printed; it says what to do.
 
 ## Idempotency and retries
 
-One key per errand, such as `var:eth:long:1`. On an error, a timeout or an unclear answer,
-**do not re-run** `acp variational`: a second open is a second trade. Look it up as in step
-4. A card that failed as unknown is never filed again until step 1 shows what happened.
+One key per errand step, such as `var:eth-long:open`; the sign-up and the act after it each
+get their own. On an error, a timeout or an unclear answer, **do not re-run** the command:
+a second open is a second trade. Check it with `acp site status <KEY>`. A card that ended
+`unknown` is never filed again until step 1 shows what happened.
 
 ## Failure handling
 
+Only Variational's own. The rail's `SITE_*` codes come with their own message: relay it.
+
 | Answer | What to do |
 | --- | --- |
-| `VARIATIONAL_NOT_ENABLED` | Not available on this account yet. Say so; don't retry. |
-| `VARIATIONAL_SIGNER_NOT_READY` | Ask your owner to enable Butler's signer in the app, then file it again. |
-| `VARIATIONAL_CHAT_ONLY` | You are in a duty. Variational is chat only; tell the owner in chat. |
-| `VARIATIONAL_BAD_COMMAND` | Fix the command from its hint (`references/commands.md`); nothing was filed. |
-| `VARIATIONAL_READ_BUSY` | Checked under a minute ago. Wait a minute; it is not an empty account. |
-| `VARIATIONAL_READ_FAILED` | Could not read Variational. Say you could not check it. |
-| A card failed with "nothing was sent" | Give the reason as written; nothing moved. |
-| A card failed with "check Variational before asking again" | Unknown result: step 1, then tell the owner what the read shows. |
-| "That access code didn't work" | The owner asks you again and enters a new code on the new card. |
+| `not_done`: no Variational account yet | Step 4: the `signup` card, then the original ask with a new key. |
+| `not_done`: "That access code didn't work" | Your owner asks you again and types a new code on a new `signup` card. |
+| `not_done`: "Couldn't set up Variational right now" | The code wasn't used. Try again later. |
+| `not_done`: less USDC on Arbitrum than the deposit | Nothing moved. Step 2's deposit check, then file it again with a new key. |
+| `not_done` naming a closed or close-only market | Swaps and stock perps keep market hours; nothing moved. Say so. |
+| `not_done` naming a size | Below Variational's minimum, or more than the position; nothing moved. |
+| `SITE_BAD_ARGS` | Fix the command from its message (`references/commands.md`); nothing was filed. |
 
 ## Limits
 
-- **Markets:** any Variational lists. Swaps and stock perps keep market hours; a closed
-  market stops the card with nothing sent. A close-only market can be closed, not opened.
-- **Sizes:** Variational's own minimum and maximum order size. A close smaller than its
-  minimum, or larger than the position, stops with nothing sent.
-- **Leverage:** 1 to 5. **Margin:** cross unless they ask for isolated, and a position
-  keeps its mode.
-- **Money moves:** a deposit is USDC from Butler's wallet on Arbitrum, and stops before
-  signing when the wallet holds less. A withdrawal goes back to Butler's wallet only.
-  While a withdrawal is still landing, the next card waits.
+- **Markets:** any Variational lists. Swaps and stock perps keep market hours.
+- **Sizes:** Variational's own minimum and maximum order size.
+- **Leverage:** 1 to 5. **Margin:** cross unless they ask for isolated, and a position keeps
+  its mode.
+- **Money moves:** a deposit is USDC from Butler's wallet on Arbitrum. A withdrawal goes
+  back to Butler's wallet only.
 
 ## Say to the owner
 
 - Size in dollars and leverage together: "a $150 ETH long with $50 of your money, at 3x".
 - Approval cards: what it does, then "approve it in the app".
-- A limit or TP/SL card: "placed", never "filled". A fill is told in chat when it happens.
-- After a close or withdrawal: what the card's outcome says, and nothing else.
+- A sign-up card: "it asks for your Variational access code: type it on the card, not here".
+- After a close or withdrawal: what the outcome says, and nothing else.
