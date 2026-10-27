@@ -1,9 +1,9 @@
 # Orders that wait for a price
 
 A limit order and a TP/SL rest on Variational and fill later, when no one is watching. So
-their card is done once the order **rests**: say "placed", never "filled". When one fills,
-or is cancelled by Variational, the owner is told in chat the next time Butler looks at
-Variational (any card or read). To look now: `bevo-read get /variational/orders`.
+their card is done once the order **rests**: say "placed", never "filled". Nobody is told
+when one fills: `acp site variational orders` lists the resting ones, and those that filled
+or were cancelled in the last day. Read it when your owner asks how an order stands.
 
 Each is filed with its line in `SKILL.md` step 3; this file is what the flags do.
 
@@ -35,5 +35,5 @@ Each is filed with its line in `SKILL.md` step 3; this file is what the flags do
 ## Cancel (`cancel`)
 
 Add `--order <ID>` to cancel one order. Without it, it cancels every resting order on that
-market. The `id` comes from `bevo-read get /variational/orders`. Each cancel is confirmed by
+market. The id is the `(order ...)` at the end of its line in `acp site variational orders`. Each cancel is confirmed by
 Variational before the card counts it done.
