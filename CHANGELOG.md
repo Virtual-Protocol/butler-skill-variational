@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.0.2
+
+- Reads (`account`, `orders`) take no idempotency key. The server answers a key it has
+  seen in the last 7 days with its first result, so a reused key on a read gave an old
+  balance that looked live.
+- Every card's key is made from the errand: market, side, size and the date and time of
+  the ask (`var:eth:long:50usd:20261027-1244`), plus the step (`:open`, `:deposit`). The
+  old `var:eth-long:open` repeated, so the same ask next week was told "already filed".
+
 ## 2.0.1
 
 - The description names the reads too (balance, positions, orders, read live every time),

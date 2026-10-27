@@ -3,7 +3,8 @@
 Each one files an approval card; nothing runs until the owner approves it. The rail
 reads the flags strictly: an unknown flag, a missing one or a value it can't read is
 `SITE_BAD_ARGS` and nothing is filed. Amounts are positive, at most 6 decimals.
-Add `--idempotency-key <KEY>` to every one.
+Add `--idempotency-key <KEY>:<step>` to every one, with this errand's key (SKILL.md
+§ Idempotency and retries). The reads `account` and `orders` never take one.
 
 | Command | What the card does |
 | --- | --- |
