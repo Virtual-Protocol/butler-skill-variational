@@ -2,7 +2,8 @@
 
 One card at a time: say the count first, file the next only once the last is `done`, and
 stop at the first that is not. A key per step, from one errand
-name: `var:eth-long:deposit`, `var:eth-long:open`.
+key (SKILL.md § Idempotency and retries): `var:eth:long:150usd:20261027-1244:deposit`,
+`var:eth:long:150usd:20261027-1244:open`. Reads take no key.
 
 ## First trade, no Variational account yet
 

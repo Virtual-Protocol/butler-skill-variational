@@ -1,7 +1,7 @@
 ---
 name: variational
 description: "Look up or trade on Variational Omni from Butler's wallet: balance, positions and orders (read live, never from memory), deposit, open, close, limit, TP/SL, cancel, withdraw, each act a card."
-version: 2.0.1
+version: 2.0.2
 metadata: {"butler":{"moneyMoving":true,"keywords":["variational","variational omni","omni.variational.io","trade on variational","long on variational","short on variational","variational position","close my variational","variational balance","variational account","variational orders","deposit to variational","withdraw from variational","variational limit order","variational take profit","variational stop loss","cancel variational order"],"requires":{"bins":["acp","bevo-read"]}}}
 ---
 
@@ -52,11 +52,12 @@ this skill says which action fits an ask and what Variational's answers mean.
 1. [FIXED] Read the account, before any act and whenever asked:
 
    ```sh
-   acp site variational account --idempotency-key <KEY>
+   acp site variational account
    ```
 
    For resting orders, and those that filled or were cancelled in the last day:
-   `acp site variational orders --idempotency-key <KEY>`. Relay what it says in plain
+   `acp site variational orders`. Never give a read a key: a key seen before answers with
+   its first, stale result instead of reading again. Relay what it says in plain
    words (`references/account.md`). "Butler's wallet has no Variational account yet":
    say so, and that a deposit or an open starts with a sign-up card. A read opens a
    browser: run it once per errand, never in a loop. `not_done` or `unknown`: say you
@@ -74,19 +75,19 @@ this skill says which action fits an ask and what Variational's answers mean.
      none does, say how much there is.
    - **Withdraw**: at most what the read showed as withdrawable.
 
-3. [FIXED] File the card, once, with one key for this errand
-   (`references/commands.md` has every form):
+3. [FIXED] File the card, once, with this errand's key (§ Idempotency and retries;
+   `references/commands.md` has every form):
 
    ```sh
-   acp site variational open --market <SYMBOL> --usd <USD> --leverage <N> --side <SIDE> --idempotency-key <KEY>
-   acp site variational close --market <SYMBOL> --idempotency-key <KEY>
-   acp site variational reverse --market <SYMBOL> --idempotency-key <KEY>
-   acp site variational margin --market <SYMBOL> --amount <USDC> --idempotency-key <KEY>
-   acp site variational limit --market <SYMBOL> --side <SIDE> --usd <USD> --price <PRICE> --leverage <N> --idempotency-key <KEY>
-   acp site variational tpsl --market <SYMBOL> --tp <PRICE> --sl <PRICE> --idempotency-key <KEY>
-   acp site variational cancel --market <SYMBOL> --idempotency-key <KEY>
-   acp site variational deposit --amount <USDC> --idempotency-key <KEY>
-   acp site variational withdraw --amount <USDC> --idempotency-key <KEY>
+   acp site variational open --market <SYMBOL> --usd <USD> --leverage <N> --side <SIDE> --idempotency-key <KEY>:open
+   acp site variational close --market <SYMBOL> --idempotency-key <KEY>:close
+   acp site variational reverse --market <SYMBOL> --idempotency-key <KEY>:reverse
+   acp site variational margin --market <SYMBOL> --amount <USDC> --idempotency-key <KEY>:margin
+   acp site variational limit --market <SYMBOL> --side <SIDE> --usd <USD> --price <PRICE> --leverage <N> --idempotency-key <KEY>:limit
+   acp site variational tpsl --market <SYMBOL> --tp <PRICE> --sl <PRICE> --idempotency-key <KEY>:tpsl
+   acp site variational cancel --market <SYMBOL> --idempotency-key <KEY>:cancel
+   acp site variational deposit --amount <USDC> --idempotency-key <KEY>:deposit
+   acp site variational withdraw --amount <USDC> --idempotency-key <KEY>:withdraw
    ```
 
    `<SYMBOL>` is what your owner named (`ETH`, `SOL`, `XAUS`, `AAPL`). `<SIDE>` is `long`
@@ -94,23 +95,28 @@ this skill says which action fits an ask and what Variational's answers mean.
    a part close adds `--percent <1-100>` or `--size <COINS>`. The reply is a card in this
    chat: tell your owner what it does, and to approve it in the app.
 
-4. [FIXED] Follow it; never file it again to find out: `acp site status <KEY>`.
+4. [FIXED] Follow it; never file it again to find out: `acp site status <KEY>:<STEP>`.
    - `done` - relay the summary and facts as written. A limit or TP/SL is "placed", not
      filled.
    - `running` - approved and running. A withdrawal stays here until the USDC lands in
      Butler's wallet, usually minutes. The chat is told when it ends.
    - `not_done` saying Butler's wallet has no Variational account - file
-     `acp site variational signup --idempotency-key <NEW_KEY>`; your owner types the access
-     code on that card. Once it is `done`, file the original ask again with a new key.
+     `acp site variational signup --idempotency-key <KEY>:signup`; your owner types the
+     access code on that card. Once it is `done`, file the original ask again with a new
+     errand key (a new time in it).
    - `unknown` - it may or may not have happened. Read step 1 before filing anything.
    - `rejected`, `failed` or a `SITE_*` code - relay what `acp` printed; it says what to do.
 
 ## Idempotency and retries
 
-One key per errand step, such as `var:eth-long:open`; the sign-up and the act after it each
-get their own. On an error, a timeout or an unclear answer, **do not re-run** the command:
-a second open is a second trade. Check it with `acp site status <KEY>`. A card that ended
-`unknown` is never filed again until step 1 shows what happened.
+Reads (`account`, `orders`) never take a key. Every card does: make one errand key from
+what was asked and when, such as `var:eth:long:50usd:20261027-1244` (market, side, size,
+the date and time of the ask), and add the step: `<KEY>:open`, `<KEY>:deposit`. A key is
+1-128 letters, digits and `: _ . -`. A key seen before answers with its first result, so a
+new ask always gets a new time, even an ask just like an earlier one. On an error, a
+timeout or an unclear answer, **do not re-run** the command: a second open is a second
+trade. Check it with `acp site status <KEY>:<STEP>`. A card that ended `unknown` is never
+filed again until step 1 shows what happened.
 
 ## Failure handling
 
