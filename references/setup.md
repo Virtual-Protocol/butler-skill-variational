@@ -23,8 +23,9 @@ don't use it, and tell them it goes on the card.
 How it can end:
 
 - `done`: "Variational is set up for Butler's wallet."
-- `not_done`: "That access code didn't work." File `signup` again, with a new errand key, if
-  they want to try another code.
+- `not_done`: "That access code didn't work." Nothing was sent. Tell your owner, then wait:
+  file `signup` again, with a new errand key, only when they ask to try another code. Never
+  file it on your own, and never more than once per ask.
 - `not_done`: "Couldn't set up Variational right now." The code wasn't used; try later.
 
 A close, withdrawal, margin, TP/SL or cancel on a wallet with no account is not set up: it

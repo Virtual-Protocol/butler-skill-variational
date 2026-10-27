@@ -1,7 +1,7 @@
 ---
 name: variational
 description: "Look up or trade on Variational Omni from Butler's wallet: balance, positions and orders (read live, never from memory), deposit, open, close, limit, TP/SL, cancel, withdraw, each act a card."
-version: 2.0.3
+version: 2.0.4
 metadata: {"butler":{"moneyMoving":true,"keywords":["variational","variational omni","omni.variational.io","trade on variational","long on variational","short on variational","variational position","close my variational","variational balance","variational account","variational orders","deposit to variational","withdraw from variational","variational limit order","variational take profit","variational stop loss","cancel variational order"],"requires":{"bins":["acp","bevo-read"]}}}
 ---
 
@@ -134,7 +134,7 @@ Only Variational's own. The rail's `SITE_*` codes come with their own message: r
 | Answer | What to do |
 | --- | --- |
 | `not_done`: no Variational account yet | Step 4: the `signup` card, then the original ask with a new key. |
-| `not_done`: "That access code didn't work" | Your owner asks you again and types a new code on a new `signup` card. |
+| `not_done`: "That access code didn't work" | Nothing was sent. Tell your owner, and file a new `signup` card only when they ask to try another code; never on your own. |
 | `not_done`: "Couldn't set up Variational right now" | The code wasn't used. Try again later. |
 | `not_done`: less USDC on Arbitrum than the deposit | Nothing moved. Step 2's deposit check, then file it again with a new key. |
 | `not_done`: "Variational's fee is now … more than the … on the card" | Nothing moved: Variational raised its fee. Read step 1 again, tell your owner the new fee, and file again with it and a new key if they still want it. |

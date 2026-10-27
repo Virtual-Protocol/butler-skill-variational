@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.4
+
+- A wrong access code: tell the owner and wait. File a new `signup` card only when they ask
+  to try another code, never on your own. "If they want" read as "assume they want", so a
+  wrong code got a fresh card each time with no ask.
+
 ## 2.0.3
 
 - Deposits and withdrawals pass `--fee`, Variational's `Transfer fee` from this errand's
