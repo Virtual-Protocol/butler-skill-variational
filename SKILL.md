@@ -1,7 +1,7 @@
 ---
 name: variational
 description: "Look up or trade on Variational Omni from Butler's wallet: balance, positions and orders (read live, never from memory), deposit, open, close, limit, TP/SL, cancel, withdraw, each act a card."
-version: 2.0.4
+version: 2.0.5
 metadata: {"butler":{"moneyMoving":true,"keywords":["variational","variational omni","omni.variational.io","trade on variational","long on variational","short on variational","variational position","close my variational","variational balance","variational account","variational orders","deposit to variational","withdraw from variational","variational limit order","variational take profit","variational stop loss","cancel variational order"],"requires":{"bins":["acp","bevo-read"]}}}
 ---
 
@@ -28,7 +28,9 @@ this skill says which action fits an ask and what Variational's answers mean.
    Butler's wallet balance and Hyperliquid positions are something else.
 2. **Figures come only from this turn's reads and the card**, never from memory or an
    earlier chat, and never save one to memory. An unreadable account is not an empty one.
-   Never work out a liquidation price, a fee or a PnL yourself.
+   Never work out a liquidation price, a fee or a PnL yourself, and never compare two
+   liquidation prices: whether one came closer is only what the read or the card says
+   ("13% below the mark", "closer"). A long's liquidation price rising is it coming closer.
 3. **Leverage is 1 to 5, and 1 unless they name one.** An open sets the leverage for the
    whole market, so it re-levers a position already open there: say so.
 4. **The access code is never in chat.** Your owner types it on the `signup` card
@@ -37,8 +39,11 @@ this skill says which action fits an ask and what Variational's answers mean.
 5. **From chat only.** A duty is refused (`SITE_DUTY_NOT_ALLOWED`).
 6. **You never touch Omni's page.** No browser, no wallet connection, no clicks: the server
    runs every step and holds the login.
-7. **Never write a Platforms row for Variational** (`bevo-platforms set`). Nothing keeps it
-   current, so it would show an old balance as if it were live.
+7. **Never write a Platforms row for Variational** (`bevo-platforms set`). The server
+   rewrites your owner's Variational row, positions included, after every read and card.
+8. **The minimum is Variational's, never Hyperliquid's.** The $15 perp minimum you know is
+   Hyperliquid's. Variational's smallest order is per market and side: quote only the
+   `Market <SYMBOL>` line of this errand's read, and never offer a size below it.
 
 ### Never file an open without all three
 
@@ -55,7 +60,19 @@ this skill says which action fits an ask and what Variational's answers mean.
 
    ```sh
    acp site variational account
+   acp site variational account --market <SYMBOL>
+   acp site variational account --market <SYMBOL> --side <SIDE> --usd <USD>
    ```
+
+   Add `--market <SYMBOL>` whenever the errand will open or place an order there, including
+   a deposit meant for that trade. Its `Market <SYMBOL>` line says whether the market trades
+   now and its smallest order each way. **Closed, close-only (for an open) or not listed:
+   say so and file nothing, not even the deposit.** Stock perps and swaps keep market hours.
+
+   Before an `open`, also give the open's `--side` and `--usd` (or `--size`), exactly as you
+   will file it. The `Estimate` line is Variational's price, fee and liquidation for it, and
+   the open's card shows the same if it is filed within 10 minutes with the same market,
+   side and size. Quote those figures only from that line; another size gets none.
 
    For resting orders, and those that filled or were cancelled in the last day:
    `acp site variational orders`. Never give a read a key: a key seen before answers with
@@ -70,8 +87,15 @@ this skill says which action fits an ask and what Variational's answers mean.
    - **Open on a market they hold on the same side**: it adds to that position, and the
      leverage applies to all of it. Say so.
    - **Open on the other side of a position they hold**: offer `close` or `reverse`.
+   - **Open or limit size**: at least the `Market` line's smallest order for that side. Below
+     it, say the smallest and ask; never pick a size for them.
    - **Close, reverse, margin, TP/SL**: only on a market they hold. `margin` needs an
      isolated position.
+   - **More margin on an isolated position**: it comes out of the cross balance. If the read
+     shows any cross position, name it before filing and say its liquidation moves closer;
+     the card's result says by how much.
+   - **TP/SL**: each position's own line says its take profit and stop loss. Never carry one
+     position's to another; "unknown" is not "none".
    - **Deposit**: Butler's wallet must hold the USDC on Arbitrum. Check first with
      `bevo-read get /user-assets --param token=USDC --param fresh=1`. If it holds less,
      offer a bridge only from a chain that holds enough, never more than it holds; if
@@ -138,14 +162,16 @@ Only Variational's own. The rail's `SITE_*` codes come with their own message: r
 | `not_done`: "Couldn't set up Variational right now" | The code wasn't used. Try again later. |
 | `not_done`: less USDC on Arbitrum than the deposit | Nothing moved. Step 2's deposit check, then file it again with a new key. |
 | `not_done`: "Variational's fee is now … more than the … on the card" | Nothing moved: Variational raised its fee. Read step 1 again, tell your owner the new fee, and file again with it and a new key if they still want it. |
-| `not_done` naming a closed or close-only market | Swaps and stock perps keep market hours; nothing moved. Say so. |
-| `not_done` naming a size | Below Variational's minimum, or more than the position; nothing moved. |
+| `not_done` naming a closed or close-only market | Swaps and stock perps keep market hours; nothing moved. Say so. Next time step 1's `--market` says it before any card. |
+| `not_done` naming a size | Below Variational's minimum, or more than the position; nothing moved. Quote the minimum it names. |
+| `not_done`: "Variational now estimates liquidation at … much closer than … on the card" | Nothing was sent: the position would sit much nearer liquidation than the card showed. Tell your owner both figures, read step 1 again with the open's side and size, and file a new card only if they still want it. |
 | `SITE_BAD_ARGS` | Fix the command from its message (`references/commands.md`); nothing was filed. |
 
 ## Limits
 
 - **Markets:** any Variational lists. Swaps and stock perps keep market hours.
-- **Sizes:** Variational's own minimum and maximum order size.
+- **Sizes:** Variational's own minimum (the read's `Market` line, per market and side, not
+  Hyperliquid's $15) and maximum order size.
 - **Leverage:** 1 to 5. **Margin:** cross unless they ask for isolated, and a position keeps
   its mode.
 - **Money moves:** a deposit is USDC from Butler's wallet on Arbitrum. A withdrawal goes
@@ -160,4 +186,5 @@ Only Variational's own. The rail's `SITE_*` codes come with their own message: r
 - After a deposit or withdrawal, a gap the size of the card's fee is Variational's fee:
   say so, never call it missing money.
 - A read in plain words, from this turn's read: "$12.40 on Variational, no open positions".
+- A liquidation as the read says it: "about $69,476, 13% below the price now".
 - Never the browser, the server, an idempotency key or an approval id.

@@ -9,7 +9,9 @@ key (SKILL.md § Idempotency and retries): `var:eth:long:150usd:20261027-1244:de
 
 "Long ETH on Variational, $150 at 3x" on a wallet with no account:
 
-1. `account`: no account yet. The trade needs about $50 of margin ($150 at 3x).
+1. `account --market ETH --side long --usd 150`: no account yet. The trade needs about $50 of margin ($150 at
+   3x). The `Market ETH` line must say open, with a smallest long at or under $150; if
+   not, say so and stop here, before any card.
 2. Check Butler's USDC on Arbitrum (`SKILL.md` step 2). Short: offer a bridge, and only
    once they agree.
 3. `signup`: your owner types the access code on its card. Wait for `done`.
@@ -18,9 +20,12 @@ key (SKILL.md § Idempotency and retries): `var:eth:long:150usd:20261027-1244:de
 
 ## Fund and trade, account already there
 
-1. `account`. Free balance enough for the margin (size / leverage)? Skip to step 3.
+1. `account --market <SYMBOL> --side <SIDE> --usd <USD>`. Closed, close-only or below the
+   smallest order: say so and stop; no deposit. Free balance enough for the margin (size / leverage)? Skip to step 3.
 2. Not enough: `deposit` the difference, as above, and wait for it.
-3. `open`. A stop or a target they named goes on the open itself (`--sl`, `--tp`): one card.
+3. `open`, with the same side and size as the read. A stop or a target they named goes on the
+   open itself (`--sl`, `--tp`): one card. Past 10 minutes or after a deposit, read again first
+   so the card carries a current estimate.
 
 ## Close and take the money out
 

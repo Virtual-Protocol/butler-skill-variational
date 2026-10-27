@@ -4,7 +4,9 @@ Each one files an approval card; nothing runs until the owner approves it. The r
 reads the flags strictly: an unknown flag, a missing one or a value it can't read is
 `SITE_BAD_ARGS` and nothing is filed. Amounts are positive, at most 6 decimals.
 Add `--idempotency-key <KEY>:<step>` to every one, with this errand's key (SKILL.md
-§ Idempotency and retries). The reads `account` and `orders` never take one.
+§ Idempotency and retries). The reads `account` and `orders` never take one;
+`account --market <SYMBOL>` also reads that market's status and smallest order, and
+`--side <SIDE> --usd <USD>` (or `--size`) adds Variational's estimate for that open.
 
 | Command | What the card does |
 | --- | --- |
