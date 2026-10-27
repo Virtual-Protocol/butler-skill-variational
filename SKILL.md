@@ -1,7 +1,7 @@
 ---
 name: variational
 description: "Look up or trade on Variational Omni from Butler's wallet: balance, positions and orders (read live, never from memory), deposit, open, close, limit, TP/SL, cancel, withdraw, each act a card."
-version: 2.0.2
+version: 2.0.3
 metadata: {"butler":{"moneyMoving":true,"keywords":["variational","variational omni","omni.variational.io","trade on variational","long on variational","short on variational","variational position","close my variational","variational balance","variational account","variational orders","deposit to variational","withdraw from variational","variational limit order","variational take profit","variational stop loss","cancel variational order"],"requires":{"bins":["acp","bevo-read"]}}}
 ---
 
@@ -37,6 +37,8 @@ this skill says which action fits an ask and what Variational's answers mean.
 5. **From chat only.** A duty is refused (`SITE_DUTY_NOT_ALLOWED`).
 6. **You never touch Omni's page.** No browser, no wallet connection, no clicks: the server
    runs every step and holds the login.
+7. **Never write a Platforms row for Variational** (`bevo-platforms set`). Nothing keeps it
+   current, so it would show an old balance as if it were live.
 
 ### Never file an open without all three
 
@@ -61,7 +63,8 @@ this skill says which action fits an ask and what Variational's answers mean.
    words (`references/account.md`). "Butler's wallet has no Variational account yet":
    say so, and that a deposit or an open starts with a sign-up card. A read opens a
    browser: run it once per errand, never in a loop. `not_done` or `unknown`: say you
-   could not check it.
+   could not check it. Its `Transfer fee` is Variational's fee on every deposit and
+   withdrawal: keep it for step 3's `--fee`.
 
 2. [ADAPT] Match the ask to the position you just read:
    - **Open on a market they hold on the same side**: it adds to that position, and the
@@ -74,6 +77,9 @@ this skill says which action fits an ask and what Variational's answers mean.
      offer a bridge only from a chain that holds enough, never more than it holds; if
      none does, say how much there is.
    - **Withdraw**: at most what the read showed as withdrawable.
+   - **Deposit or withdraw, the fee**: say it before filing, from the read's `Transfer fee`:
+     depositing X adds X less the fee, withdrawing X sends X less the fee. If the read says
+     the fee is `unknown`, don't file: say you could not check the fee, and read again later.
 
 3. [FIXED] File the card, once, with this errand's key (§ Idempotency and retries;
    `references/commands.md` has every form):
@@ -86,9 +92,12 @@ this skill says which action fits an ask and what Variational's answers mean.
    acp site variational limit --market <SYMBOL> --side <SIDE> --usd <USD> --price <PRICE> --leverage <N> --idempotency-key <KEY>:limit
    acp site variational tpsl --market <SYMBOL> --tp <PRICE> --sl <PRICE> --idempotency-key <KEY>:tpsl
    acp site variational cancel --market <SYMBOL> --idempotency-key <KEY>:cancel
-   acp site variational deposit --amount <USDC> --idempotency-key <KEY>:deposit
-   acp site variational withdraw --amount <USDC> --idempotency-key <KEY>:withdraw
+   acp site variational deposit --amount <USDC> --fee <FEE> --idempotency-key <KEY>:deposit
+   acp site variational withdraw --amount <USDC> --fee <FEE> --idempotency-key <KEY>:withdraw
    ```
+
+   `<FEE>` is this errand's `Transfer fee` from step 1, as it was read (`0.1`). The card
+   shows it, and the run never lets Variational take more.
 
    `<SYMBOL>` is what your owner named (`ETH`, `SOL`, `XAUS`, `AAPL`). `<SIDE>` is `long`
    or `short`. An open or limit sized in coins takes `--size <COINS>` instead of `--usd`;
@@ -128,6 +137,7 @@ Only Variational's own. The rail's `SITE_*` codes come with their own message: r
 | `not_done`: "That access code didn't work" | Your owner asks you again and types a new code on a new `signup` card. |
 | `not_done`: "Couldn't set up Variational right now" | The code wasn't used. Try again later. |
 | `not_done`: less USDC on Arbitrum than the deposit | Nothing moved. Step 2's deposit check, then file it again with a new key. |
+| `not_done`: "Variational's fee is now … more than the … on the card" | Nothing moved: Variational raised its fee. Read step 1 again, tell your owner the new fee, and file again with it and a new key if they still want it. |
 | `not_done` naming a closed or close-only market | Swaps and stock perps keep market hours; nothing moved. Say so. |
 | `not_done` naming a size | Below Variational's minimum, or more than the position; nothing moved. |
 | `SITE_BAD_ARGS` | Fix the command from its message (`references/commands.md`); nothing was filed. |
@@ -147,5 +157,7 @@ Only Variational's own. The rail's `SITE_*` codes come with their own message: r
 - Approval cards: what it does, then "approve it in the app".
 - A sign-up card: "it asks for your Variational access code: type it on the card, not here".
 - After a close or withdrawal: what the outcome says, and nothing else.
+- After a deposit or withdrawal, a gap the size of the card's fee is Variational's fee:
+  say so, never call it missing money.
 - A read in plain words, from this turn's read: "$12.40 on Variational, no open positions".
 - Never the browser, the server, an idempotency key or an approval id.
