@@ -8,13 +8,13 @@ and withdraw. Any market Variational lists: crypto perps, swaps and stock perps.
 
 Two things shape how it works:
 
-- **The skill only instructs; bevo-server does the work.** Variational has no public
+- **The skill only instructs; the server does the work.** Variational has no public
   trading API, and its session can trade and withdraw with no signature, so no Butler
-  sandbox ever holds it. Every act is `acp site variational …` on bevo-server's site rail
+  sandbox ever holds it. Every act is `acp site variational …` on the server's site rail,
   which files an approval card; the owner approves it in the app,
-  and bevo-server carries it out in a browser of its own, holding every request the page
+  and the server carries it out in a browser of its own, holding every request the page
   sends to that card, and posts how it ended. The reads are `acp site variational account`
-  and `orders`. bevo-server `docs/site-command.md` § Variational is the reference.
+  and `orders`.
 - **Only where Variational is turned on.** Elsewhere the rail answers `SITE_NOT_ENABLED`,
   which the skill relays. It is chat only: a duty is refused.
 

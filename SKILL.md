@@ -1,8 +1,8 @@
 ---
 name: variational
-description: Trade perps on Variational Omni from Butler's wallet - deposit, open, close, reverse, margin, limit, TP/SL, cancel, withdraw - each act a card the owner approves.
-version: 2.0.0
-metadata: {"butler":{"moneyMoving":true,"keywords":["variational","variational omni","omni.variational.io","trade on variational","long on variational","short on variational","variational position","close my variational","variational balance","deposit to variational","withdraw from variational","variational limit order","variational take profit","variational stop loss","cancel variational order"],"requires":{"bins":["acp","bevo-read"]}}}
+description: "Look up or trade on Variational Omni from Butler's wallet: balance, positions and orders (read live, never from memory), deposit, open, close, limit, TP/SL, cancel, withdraw, each act a card."
+version: 2.0.1
+metadata: {"butler":{"moneyMoving":true,"keywords":["variational","variational omni","omni.variational.io","trade on variational","long on variational","short on variational","variational position","close my variational","variational balance","variational account","variational orders","deposit to variational","withdraw from variational","variational limit order","variational take profit","variational stop loss","cancel variational order"],"requires":{"bins":["acp","bevo-read"]}}}
 ---
 
 ## When to use
@@ -19,23 +19,24 @@ Your owner names **Variational** (Omni, omni.variational.io) and wants to:
 - **More than one act** - "fund it and long ETH", "close and withdraw": `references/flows.md`.
 
 Not this skill: Hyperliquid perps (`acp trade`), Papertrade, or anything your owner did
-not say is on Variational. Variational runs on Bevo's site rail (`acp site variational …`);
+not say is on Variational. Variational runs on the server's site rail (`acp site variational …`);
 this skill says which action fits an ask and what Variational's answers mean.
 
 ## Before you start
 
 1. **Variational is its own venue.** Its balance and positions are only in its own reads;
    Butler's wallet balance and Hyperliquid positions are something else.
-2. **Figures come only from this turn's reads and the card.** An unreadable account is not
-   an empty one. Never work out a liquidation price, a fee or a PnL yourself.
+2. **Figures come only from this turn's reads and the card**, never from memory or an
+   earlier chat, and never save one to memory. An unreadable account is not an empty one.
+   Never work out a liquidation price, a fee or a PnL yourself.
 3. **Leverage is 1 to 5, and 1 unless they name one.** An open sets the leverage for the
    whole market, so it re-levers a position already open there: say so.
 4. **The access code is never in chat.** Your owner types it on the `signup` card
    (`references/setup.md`). Never ask for it, never repeat one they paste, and never put
    it in a command.
 5. **From chat only.** A duty is refused (`SITE_DUTY_NOT_ALLOWED`).
-6. **You never touch Omni's page.** No browser, no wallet connection, no clicks: Bevo runs
-   every step and holds the login.
+6. **You never touch Omni's page.** No browser, no wallet connection, no clicks: the server
+   runs every step and holds the login.
 
 ### Never file an open without all three
 
@@ -140,3 +141,5 @@ Only Variational's own. The rail's `SITE_*` codes come with their own message: r
 - Approval cards: what it does, then "approve it in the app".
 - A sign-up card: "it asks for your Variational access code: type it on the card, not here".
 - After a close or withdrawal: what the outcome says, and nothing else.
+- A read in plain words, from this turn's read: "$12.40 on Variational, no open positions".
+- Never the browser, the server, an idempotency key or an approval id.

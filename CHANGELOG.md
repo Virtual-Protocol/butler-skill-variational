@@ -1,8 +1,18 @@
 # Changelog
 
+## 2.0.1
+
+- The description names the reads too (balance, positions, orders, read live every time),
+  so a "what's my balance" ask picks this skill instead of answering from memory.
+- Figures are never taken from memory or an earlier chat, and never saved to memory.
+- No internal names in the skill: no repositories, and the platform is "the server".
+- Say to the owner: a read in plain words, and never the browser, the server, an
+  idempotency key or an approval id.
+- The description is a quoted string, so it can hold a colon.
+
 ## 2.0.0
 
-- On Bevo's site rail: every act is `acp site variational <action>`, the reads are
+- On the server's site rail: every act is `acp site variational <action>`, the reads are
   `acp site variational account` and `orders`, and a card is followed with
   `acp site status <key>`. The rail's own output and codes say what to do; this skill adds
   only what is Variational's.
@@ -22,10 +32,10 @@
 
 ## 1.0.0
 
-- First version. The playbook that was six rows in the built-in `acp` skill
-  (virtuals-agent `skill-md.ts`), as a hub skill: read the account and resting orders with
-  `bevo-read get /variational/*`, then file each act with `acp variational …` and follow
-  its card with `bevo-read request <key> --route variational`.
-- Every command in `references/commands.md`, from bevo-server `docs/variational.md`.
+- First version. The playbook that was six rows in the built-in `acp` skill, as a hub
+  skill: read the account and resting orders with `bevo-read get /variational/*`, then file
+  each act with `acp variational …` and follow its card with
+  `bevo-read request <key> --route variational`.
+- Every command in `references/commands.md`.
 - The first card on a new account comes back for the access code; the owner enters it on
   the card (`references/setup.md`).

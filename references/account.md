@@ -1,6 +1,6 @@
 # Reading Variational
 
-Two reads, neither a card: they move nothing. Each opens a browser on bevo-server: run one
+Two reads, neither a card: they move nothing. Each opens a browser on the server: run one
 once per errand, never in a loop. Both are chat only.
 
 ## `acp site variational account`
