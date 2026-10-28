@@ -6,7 +6,7 @@ read strictly: an unknown flag, a missing one or a value it can't read is
 Add `--idempotency-key <KEY>:<step>` to every one, with this errand's key (SKILL.md
 § Idempotency and retries). The reads `account` and `orders` never take one;
 `account --market <SYMBOL>` also reads that market's status and smallest order, and
-`--side <SIDE> --usd <USD>` (or `--size`) adds Variational's estimate for that open.
+`--side <SIDE> --usd <USD>` (or `--size`) `--leverage <N>` adds Variational's estimate for that open, its room said at that leverage.
 
 | Command | What the card does |
 | --- | --- |
