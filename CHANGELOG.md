@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.0.8
+
+- "Which swaps are open or closed?" is one `acp site variational markets` read, in seconds
+  and with no sign-in, never one `account --market` read per market. It can be up to 10
+  minutes behind; before filing on a market, its `account --market` line is still the answer.
+- Needs the server with the `markets` read; an older one does not know it.
+
 ## 2.0.7
 
 - "How much more can I add?" comes from the `Market` line, which now says how much more
