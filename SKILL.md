@@ -1,7 +1,7 @@
 ---
 name: variational
 description: "Look up or trade on Variational Omni from Butler's wallet: balance, positions and orders (read live, never from memory), deposit, open, close, limit, TP/SL, cancel, withdraw, each act a card."
-version: 2.0.7
+version: 2.0.8
 metadata: {"butler":{"moneyMoving":true,"keywords":["variational","variational omni","omni.variational.io","trade on variational","long on variational","short on variational","variational position","close my variational","variational balance","variational account","variational orders","deposit to variational","withdraw from variational","variational limit order","variational take profit","variational stop loss","cancel variational order"],"requires":{"bins":["acp","bevo-read"]}}}
 ---
 
@@ -10,6 +10,8 @@ metadata: {"butler":{"moneyMoving":true,"keywords":["variational","variational o
 Your owner names **Variational** (Omni, omni.variational.io) and wants to:
 
 - **Look** - "my Variational balance", "my positions there", "my orders": step 1, then stop.
+- **Which markets are open** - "which swaps on Variational are closed now?", "is gold
+  trading?": `acp site variational markets`, then stop (`references/account.md`).
 - **Fund** - "put 20 USDC into Variational": steps 1 to 4 with `deposit`.
 - **Open** - "long ETH on Variational with $50 at 3x": steps 1 to 4.
 - **Close, reverse, re-margin** - "close half my SOL", "flip it", "set my margin to 30": steps 1, 3, 4.
@@ -68,6 +70,8 @@ this skill says which action fits an ask and what Variational's answers mean.
    a deposit meant for that trade. Its `Market <SYMBOL>` line says whether the market trades
    now and its smallest order each way. **Closed, close-only (for an open) or not listed:
    say so and file nothing, not even the deposit.** Stock perps and swaps keep market hours.
+   To say which swaps are open or closed, run `acp site variational markets` once: never
+   one `--market` read per market to find out.
 
    Before an `open`, also give the open's `--side`, `--usd` (or `--size`) and `--leverage`, exactly as you
    will file it. The `Estimate` line is Variational's price, fee and liquidation for it, and

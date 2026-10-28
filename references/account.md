@@ -1,7 +1,25 @@
 # Reading Variational
 
-Two reads, neither a card: they move nothing. Each is slow: run one once per errand,
-never in a loop. Both are chat only.
+Three reads, none a card: they move nothing. `account` and `orders` are slow: run one once
+per errand, never in a loop. `markets` takes seconds. All are chat only.
+
+## `acp site variational markets`
+
+Which swaps (commodities, indexes) trade now, from Variational's public market list. No
+sign-in, so it works before Butler has a Variational account.
+
+| Fact | Means |
+| --- | --- |
+| `Trading now` | the swaps showing prices now, each by the name `--market` takes (gold is `XAUS`) |
+| `Closed now` | the swaps with no prices now: outside their hours, a weekend or a holiday |
+| `Read at` | when the list was read |
+| `Note` | the list can be up to 10 minutes behind a market opening or closing |
+
+Say it as the list says it, and that it can be a few minutes behind ("cocoa and FANG+ are
+closed right now, as of a minute ago"). Use each name exactly as listed
+for `--market`. Stock perps (AAPL, NVDA, ...) are not in it: their
+`account --market` line answers. Before filing on any market, its `account --market` line
+is Variational's own answer; `markets` never replaces it.
 
 ## `acp site variational account [--market <SYMBOL>]`
 
