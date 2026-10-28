@@ -1,7 +1,7 @@
 ---
 name: variational
 description: "Look up or trade on Variational Omni from Butler's wallet: balance, positions and orders (read live, never from memory), deposit, open, close, limit, TP/SL, cancel, withdraw, each act a card."
-version: 2.0.5
+version: 2.0.6
 metadata: {"butler":{"moneyMoving":true,"keywords":["variational","variational omni","omni.variational.io","trade on variational","long on variational","short on variational","variational position","close my variational","variational balance","variational account","variational orders","deposit to variational","withdraw from variational","variational limit order","variational take profit","variational stop loss","cancel variational order"],"requires":{"bins":["acp","bevo-read"]}}}
 ---
 
@@ -19,7 +19,7 @@ Your owner names **Variational** (Omni, omni.variational.io) and wants to:
 - **More than one act** - "fund it and long ETH", "close and withdraw": `references/flows.md`.
 
 Not this skill: Hyperliquid perps (`acp trade`), Papertrade, or anything your owner did
-not say is on Variational. Variational runs on the server's site rail (`acp site variational …`);
+not say is on Variational. Every Variational act and read is `acp site variational …`;
 this skill says which action fits an ask and what Variational's answers mean.
 
 ## Before you start
@@ -38,9 +38,9 @@ this skill says which action fits an ask and what Variational's answers mean.
    it in a command.
 5. **From chat only.** A duty is refused (`SITE_DUTY_NOT_ALLOWED`).
 6. **You never touch Omni's page.** No browser, no wallet connection, no clicks: the server
-   runs every step and holds the login.
-7. **Never write a Platforms row for Variational** (`bevo-platforms set`). The server
-   rewrites your owner's Variational row, positions included, after every read and card.
+   runs every step.
+7. **Never write a Platforms row for Variational** (`bevo-platforms set`): it is kept
+   current for you.
 8. **The minimum is Variational's, never Hyperliquid's.** The $15 perp minimum you know is
    Hyperliquid's. Variational's smallest order is per market and side: quote only the
    `Market <SYMBOL>` line of this errand's read, and never offer a size below it.
@@ -78,8 +78,8 @@ this skill says which action fits an ask and what Variational's answers mean.
    `acp site variational orders`. Never give a read a key: a key seen before answers with
    its first, stale result instead of reading again. Relay what it says in plain
    words (`references/account.md`). "Butler's wallet has no Variational account yet":
-   say so, and that a deposit or an open starts with a sign-up card. A read opens a
-   browser: run it once per errand, never in a loop. `not_done` or `unknown`: say you
+   say so, and that a deposit or an open starts with a sign-up card. A read is slow:
+   run it once per errand, never in a loop. `not_done` or `unknown`: say you
    could not check it. Its `Transfer fee` is Variational's fee on every deposit and
    withdrawal: keep it for step 3's `--fee`.
 
@@ -89,11 +89,17 @@ this skill says which action fits an ask and what Variational's answers mean.
    - **Open on the other side of a position they hold**: offer `close` or `reverse`.
    - **Open or limit size**: at least the `Market` line's smallest order for that side. Below
      it, say the smallest and ask; never pick a size for them.
+   - **Open size, the top**: the `Estimate` line says how much more Variational takes on
+     that side now. If it ends "THIS OPEN IS TOO BIG", file nothing: say how much it takes
+     and ask what they want (that size or less, a deposit first, or nothing). Never judge it
+     from withdrawable or balance yourself: Variational's leverage limit is not in those.
+     "room on this side unknown": file as usual; the card says it again.
    - **Close, reverse, margin, TP/SL**: only on a market they hold. `margin` needs an
      isolated position.
-   - **More margin on an isolated position**: it comes out of the cross balance. If the read
-     shows any cross position, name it before filing and say its liquidation moves closer;
-     the card's result says by how much.
+   - **More margin on an isolated position**: `--amount` is the new total, not the change:
+     the read's margin plus what they add, to the cent ($0.965354 + $1 → `1.97`). It comes
+     out of the cross balance: name any cross position and say its liquidation moves
+     closer. After it, say only what the result says about each liquidation.
    - **TP/SL**: each position's own line says its take profit and stop loss. Never carry one
      position's to another; "unknown" is not "none".
    - **Deposit**: Butler's wallet must hold the USDC on Arbitrum. Check first with
@@ -153,19 +159,9 @@ filed again until step 1 shows what happened.
 
 ## Failure handling
 
-Only Variational's own. The rail's `SITE_*` codes come with their own message: relay it.
-
-| Answer | What to do |
-| --- | --- |
-| `not_done`: no Variational account yet | Step 4: the `signup` card, then the original ask with a new key. |
-| `not_done`: "That access code didn't work" | Nothing was sent. Tell your owner, and file a new `signup` card only when they ask to try another code; never on your own. |
-| `not_done`: "Couldn't set up Variational right now" | The code wasn't used. Try again later. |
-| `not_done`: less USDC on Arbitrum than the deposit | Nothing moved. Step 2's deposit check, then file it again with a new key. |
-| `not_done`: "Variational's fee is now … more than the … on the card" | Nothing moved: Variational raised its fee. Read step 1 again, tell your owner the new fee, and file again with it and a new key if they still want it. |
-| `not_done` naming a closed or close-only market | Swaps and stock perps keep market hours; nothing moved. Say so. Next time step 1's `--market` says it before any card. |
-| `not_done` naming a size | Below Variational's minimum, or more than the position; nothing moved. Quote the minimum it names. |
-| `not_done`: "Variational now estimates liquidation at … much closer than … on the card" | Nothing was sent: the position would sit much nearer liquidation than the card showed. Tell your owner both figures, read step 1 again with the open's side and size, and file a new card only if they still want it. |
-| `SITE_BAD_ARGS` | Fix the command from its message (`references/commands.md`); nothing was filed. |
+A `not_done` names what went wrong; `references/failures.md` says what to do for each of
+Variational's own (a turned-down order, a wrong access code, a raised fee, a closed market,
+a size). `SITE_*` codes come with their own message: relay it.
 
 ## Limits
 

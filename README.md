@@ -6,17 +6,9 @@ read the balance, positions and resting orders, deposit, open a long or a short,
 reverse, set isolated margin, place a limit order or a take profit and stop loss, cancel,
 and withdraw. Any market Variational lists: crypto perps, swaps and stock perps.
 
-Two things shape how it works:
-
-- **The skill only instructs; the server does the work.** Variational has no public
-  trading API, and its session can trade and withdraw with no signature, so no Butler
-  sandbox ever holds it. Every act is `acp site variational …` on the server's site rail,
-  which files an approval card; the owner approves it in the app,
-  and the server carries it out in a browser of its own, holding every request the page
-  sends to that card, and posts how it ended. The reads are `acp site variational account`
-  and `orders`.
-- **Only where Variational is turned on.** Elsewhere the rail answers `SITE_NOT_ENABLED`,
-  which the skill relays. It is chat only: a duty is refused.
+The skill only instructs; the server does the work. Every act is `acp site variational …`,
+which files an approval card; the owner approves it in the app, and the server carries it
+out and posts how it ended. The reads are `acp site variational account` and `orders`.
 
 One Butler skill, published by the
 [Butler skill hub](https://github.com/Virtual-Protocol/butler-skills): the hub's
@@ -25,7 +17,8 @@ One Butler skill, published by the
 - `SKILL.md` - the playbook (see the hub's
   [SKILL_STANDARD.md](https://github.com/Virtual-Protocol/butler-skills/blob/main/SKILL_STANDARD.md))
 - `references/` - every command, reading the account and orders, orders that wait for a
-  price, the sign-up card, and errands that take more than one card
+  price, the sign-up card, errands that take more than one card, and what each `not_done`
+  means
 - `CHANGELOG.md` - one entry per version; every change bumps `version` in SKILL.md
 
 No helper script: every step is a command the Butler sandbox already has.
