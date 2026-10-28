@@ -1,7 +1,7 @@
 # Every Variational command
 
-Each one files an approval card; nothing runs until the owner approves it. The rail
-reads the flags strictly: an unknown flag, a missing one or a value it can't read is
+Each one files an approval card; nothing runs until the owner approves it. Flags are
+read strictly: an unknown flag, a missing one or a value it can't read is
 `SITE_BAD_ARGS` and nothing is filed. Amounts are positive, at most 6 decimals.
 Add `--idempotency-key <KEY>:<step>` to every one, with this errand's key (SKILL.md
 § Idempotency and retries). The reads `account` and `orders` never take one;
@@ -18,7 +18,7 @@ Add `--idempotency-key <KEY>:<step>` to every one, with this errand's key (SKILL
 | `acp site variational close --market <SYMBOL> --percent <1-100>` | Closes that share of it |
 | `acp site variational close --market <SYMBOL> --size <coins>` | Closes that many coins of it |
 | `acp site variational reverse --market <SYMBOL>` | Flips a long into a short of the same size, or the reverse |
-| `acp site variational margin --market <SYMBOL> --amount <usdc>` | Sets an isolated position's margin to that amount |
+| `acp site variational margin --market <SYMBOL> --amount <usdc>` | Sets an isolated position's margin to that amount (the new total, to the cent) |
 | `acp site variational limit --market <SYMBOL> --side long\|short (--usd <n> \| --size <coins>) --price <p> [--leverage <1-5>] [--margin cross\|isolated] [--reduce-only]` | Places an order that waits for its price (`references/resting-orders.md`) |
 | `acp site variational tpsl --market <SYMBOL> [--tp <price>] [--sl <price>]` | Sets or replaces the take profit and stop loss on a held position |
 | `acp site variational cancel --market <SYMBOL> [--order <id>]` | Cancels every resting order on that market, or one |
