@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.0.7
+
+- "How much more can I add?" comes from the `Market` line, which now says how much more
+  each side takes. Never price an order the owner did not ask for to find it, and never
+  say how a figure was read.
+- Price an open with its `--leverage` too: a room is only for the leverage it names (an
+  unused market sits at Variational's default, 20x on NVDA, where far more fits than at 1x).
+  Never offer a room at another leverage.
+- Needs the server whose `Market` line carries each side's room and whose read takes
+  `--leverage`; an older one says "how much more it takes is unknown" or refuses the flag.
+
 ## 2.0.6
 
 - The `Estimate` line also says how much more Variational takes on that side now. An open

@@ -1,7 +1,7 @@
 ---
 name: variational
 description: "Look up or trade on Variational Omni from Butler's wallet: balance, positions and orders (read live, never from memory), deposit, open, close, limit, TP/SL, cancel, withdraw, each act a card."
-version: 2.0.6
+version: 2.0.7
 metadata: {"butler":{"moneyMoving":true,"keywords":["variational","variational omni","omni.variational.io","trade on variational","long on variational","short on variational","variational position","close my variational","variational balance","variational account","variational orders","deposit to variational","withdraw from variational","variational limit order","variational take profit","variational stop loss","cancel variational order"],"requires":{"bins":["acp","bevo-read"]}}}
 ---
 
@@ -61,7 +61,7 @@ this skill says which action fits an ask and what Variational's answers mean.
    ```sh
    acp site variational account
    acp site variational account --market <SYMBOL>
-   acp site variational account --market <SYMBOL> --side <SIDE> --usd <USD>
+   acp site variational account --market <SYMBOL> --side <SIDE> --usd <USD> --leverage <N>
    ```
 
    Add `--market <SYMBOL>` whenever the errand will open or place an order there, including
@@ -69,7 +69,7 @@ this skill says which action fits an ask and what Variational's answers mean.
    now and its smallest order each way. **Closed, close-only (for an open) or not listed:
    say so and file nothing, not even the deposit.** Stock perps and swaps keep market hours.
 
-   Before an `open`, also give the open's `--side` and `--usd` (or `--size`), exactly as you
+   Before an `open`, also give the open's `--side`, `--usd` (or `--size`) and `--leverage`, exactly as you
    will file it. The `Estimate` line is Variational's price, fee and liquidation for it, and
    the open's card shows the same if it is filed within 10 minutes with the same market,
    side and size. Quote those figures only from that line; another size gets none.
@@ -89,11 +89,12 @@ this skill says which action fits an ask and what Variational's answers mean.
    - **Open on the other side of a position they hold**: offer `close` or `reverse`.
    - **Open or limit size**: at least the `Market` line's smallest order for that side. Below
      it, say the smallest and ask; never pick a size for them.
-   - **Open size, the top**: the `Estimate` line says how much more Variational takes on
-     that side now. If it ends "THIS OPEN IS TOO BIG", file nothing: say how much it takes
-     and ask what they want (that size or less, a deposit first, or nothing). Never judge it
-     from withdrawable or balance yourself: Variational's leverage limit is not in those.
-     "room on this side unknown": file as usual; the card says it again.
+   - **Open size, the top**: the `Market` line says how much more each side takes now; the
+     `Estimate` line says it for the open. If it ends "THIS OPEN IS TOO BIG", file nothing:
+     say how much it takes and ask what they want (that size or less, a deposit first, or
+     nothing). "How much more can I add?" is the `Market` line: never price an order they
+     did not ask for, and never say how a figure was read. A room is only for the leverage it
+     names: never offer one at another leverage. Never judge it from withdrawable or balance.
    - **Close, reverse, margin, TP/SL**: only on a market they hold. `margin` needs an
      isolated position.
    - **More margin on an isolated position**: `--amount` is the new total, not the change:
