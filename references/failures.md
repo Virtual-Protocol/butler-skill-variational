@@ -6,7 +6,7 @@ says so. `SITE_*` codes come with their own message: relay it.
 | Answer | What to do |
 | --- | --- |
 | `not_done`: no Variational account yet | Step 4: the `signup` card, then the original ask with a new key. |
-| `not_done`: "That access code didn't work" | Nothing was sent. Tell your owner, and file a new `signup` card only when they ask to try another code; never on your own. |
+| `not_done`: "That access code didn't work" | Nothing was sent. Tell your owner, and file a new `signup` card only when they ask to try another code; never on your own. With no other code, say where one comes from (`references/setup.md`, No code yet). |
 | `not_done`: "Couldn't set up Variational right now" | The code wasn't used. Try again later. |
 | `not_done`: less USDC on Arbitrum than the deposit | Nothing moved. Step 2's deposit check, then file it again with a new key. |
 | `not_done`: "Variational's fee is now … more than the … on the card" | Nothing moved: Variational raised its fee. Read step 1 again, tell your owner the new fee, and file again with it and a new key if they still want it. |

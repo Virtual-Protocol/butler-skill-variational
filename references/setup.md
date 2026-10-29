@@ -1,7 +1,8 @@
 # Setting up Variational: the `signup` card
 
 Butler's wallet needs a Variational account before it can trade, and creating one takes an
-**access code** from Variational. The owner has it; Butler never sees it.
+**access code** from Variational. The owner brings it; Butler never sees one and has none
+to give.
 
 1. A deposit or an open on a wallet with no account ends `not_done`, saying Butler's
    wallet has no Variational account yet. Nothing was sent.
@@ -19,6 +20,12 @@ Butler's wallet needs a Variational account before it can trade, and creating on
 What you say: "First time on Variational. Approve the sign-up card and type your access
 code on it." Never ask for the code in chat. If they paste one anyway, don't repeat it,
 don't use it, and tell them it goes on the card.
+
+No code yet: Variational is invite-only. Say: "Variational needs an access code to sign up.
+Ask someone who already uses Variational, or get one on Variational's Discord
+(https://discord.gg/variational), then type it on the card." That is the only link to give
+(Variational's official links page lists it). Never name a code, a code-listing website or
+a referral link, and never search for one.
 
 How it can end:
 
