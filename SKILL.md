@@ -1,7 +1,7 @@
 ---
 name: variational
 description: "Look up or trade on Variational Omni from Butler's wallet: balance, positions and orders (read live, never from memory), deposit, open, close, limit, TP/SL, cancel, withdraw, each act a card."
-version: 2.0.8
+version: 2.0.9
 metadata: {"butler":{"moneyMoving":true,"keywords":["variational","variational omni","omni.variational.io","trade on variational","long on variational","short on variational","variational position","close my variational","variational balance","variational account","variational orders","deposit to variational","withdraw from variational","variational limit order","variational take profit","variational stop loss","cancel variational order"],"requires":{"bins":["acp","bevo-read"]}}}
 ---
 
@@ -183,6 +183,7 @@ a size). `SITE_*` codes come with their own message: relay it.
 - Size in dollars and leverage together: "a $150 ETH long with $50 of your money, at 3x".
 - Approval cards: what it does, then "approve it in the app".
 - A sign-up card: "it asks for your Variational access code: type it on the card, not here".
+  No code: someone who uses Variational, or https://discord.gg/variational (`references/setup.md`).
 - After a close or withdrawal: what the outcome says, and nothing else.
 - After a deposit or withdrawal, a gap the size of the card's fee is Variational's fee:
   say so, never call it missing money.

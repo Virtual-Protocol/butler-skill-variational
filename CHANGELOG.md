@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.9
+
+- An owner with no access code is told where one comes from: someone who uses Variational,
+  or Variational's Discord, https://discord.gg/variational (from Variational's official
+  links page). Never a code, a code-listing site or a referral link.
+- No server change needed: the sign-up card still only says to type the code, so Butler is
+  the one who says where to get it.
+
 ## 2.0.8
 
 - "Which swaps are open or closed?" is one `acp site variational markets` read, in seconds
