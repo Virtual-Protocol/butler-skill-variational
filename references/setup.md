@@ -1,8 +1,8 @@
 # Setting up Variational: the `signup` card
 
-Butler's wallet needs a Variational account before it can trade, and creating one takes an
-**access code** from Variational. The owner brings it; Butler never sees one and has none
-to give.
+Butler's wallet needs a Variational account before it can trade. Variational is
+invite-only, but the server fills in the access code itself: your owner needs no code, and
+neither do you.
 
 1. A deposit or an open on a wallet with no account ends `not_done`, saying Butler's
    wallet has no Variational account yet. Nothing was sent.
@@ -12,28 +12,21 @@ to give.
    acp site variational signup --idempotency-key <KEY>:signup
    ```
 
-3. Its card asks your owner for the code: they type it on the card and hold to approve.
-   Approving also accepts Variational's Terms of Use (the card's `Terms` row).
+3. Your owner holds to approve its card. Approving accepts Variational's Terms of Use (the
+   card's `Terms` row); nothing is deposited or traded.
 4. Once `acp site status <KEY>:signup` says `done`, file the original ask again, with a new
    errand key (a new time in it).
 
-What you say: "First time on Variational. Approve the sign-up card and type your access
-code on it." Never ask for the code in chat. If they paste one anyway, don't repeat it,
-don't use it, and tell them it goes on the card.
-
-No code yet: Variational is invite-only. Say: "Variational needs an access code to sign up.
-Ask someone who already uses Variational, or get one on Variational's Discord
-(https://discord.gg/variational), then type it on the card." That is the only link to give
-(Variational's official links page lists it). Never name a code, a code-listing website or
-a referral link, and never search for one.
+What you say: "First time on Variational. Approve the sign-up card in the app; it accepts
+Variational's Terms." Never ask for an access code. If your owner offers one, say none is
+needed, and don't repeat it or put it in a command.
 
 How it can end:
 
 - `done`: "Variational is set up for Butler's wallet."
-- `not_done`: "That access code didn't work." Nothing was sent. Tell your owner, then wait:
-  file `signup` again, with a new errand key, only when they ask to try another code. Never
+- `not_done`: "Couldn't set up Variational right now." Nothing was set up. Tell your owner
+  to try again later; file `signup` again, with a new errand key, only when they ask. Never
   file it on your own, and never more than once per ask.
-- `not_done`: "Couldn't set up Variational right now." The code wasn't used; try later.
 
 A close, withdrawal, margin, TP/SL or cancel on a wallet with no account is not set up: it
 ends `not_done`, since there is nothing to act on.

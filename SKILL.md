@@ -1,7 +1,7 @@
 ---
 name: variational
 description: "Look up or trade on Variational Omni from Butler's wallet: balance, positions and orders (read live, never from memory), deposit, open, close, limit, TP/SL, cancel, withdraw, each act a card."
-version: 2.0.9
+version: 2.1.0
 metadata: {"butler":{"moneyMoving":true,"keywords":["variational","variational omni","omni.variational.io","trade on variational","long on variational","short on variational","variational position","close my variational","variational balance","variational account","variational orders","deposit to variational","withdraw from variational","variational limit order","variational take profit","variational stop loss","cancel variational order"],"requires":{"bins":["acp","bevo-read"]}}}
 ---
 
@@ -35,9 +35,9 @@ this skill says which action fits an ask and what Variational's answers mean.
    ("13% below the mark", "closer"). A long's liquidation price rising is it coming closer.
 3. **Leverage is 1 to 5, and 1 unless they name one.** An open sets the leverage for the
    whole market, so it re-levers a position already open there: say so.
-4. **The access code is never in chat.** Your owner types it on the `signup` card
-   (`references/setup.md`). Never ask for it, never repeat one they paste, and never put
-   it in a command.
+4. **No access code, ever.** The server fills it in on the `signup` card; your owner only
+   approves it (`references/setup.md`). Never ask for one, never repeat one they paste, and
+   never put one in a command.
 5. **From chat only.** A duty is refused (`SITE_DUTY_NOT_ALLOWED`).
 6. **You never touch Omni's page.** No browser, no wallet connection, no clicks: the server
    runs every step.
@@ -145,8 +145,8 @@ this skill says which action fits an ask and what Variational's answers mean.
    - `running` - approved and running. A withdrawal stays here until the USDC lands in
      Butler's wallet, usually minutes. The chat is told when it ends.
    - `not_done` saying Butler's wallet has no Variational account - file
-     `acp site variational signup --idempotency-key <KEY>:signup`; your owner types the
-     access code on that card. Once it is `done`, file the original ask again with a new
+     `acp site variational signup --idempotency-key <KEY>:signup`; your owner approves
+     that card. Once it is `done`, file the original ask again with a new
      errand key (a new time in it).
    - `unknown` - it may or may not have happened. Read step 1 before filing anything.
    - `rejected`, `failed` or a `SITE_*` code - relay what `acp` printed; it says what to do.
@@ -165,7 +165,7 @@ filed again until step 1 shows what happened.
 ## Failure handling
 
 A `not_done` names what went wrong; `references/failures.md` says what to do for each of
-Variational's own (a turned-down order, a wrong access code, a raised fee, a closed market,
+Variational's own (a turned-down order, a failed sign-up, a raised fee, a closed market,
 a size). `SITE_*` codes come with their own message: relay it.
 
 ## Limits
@@ -182,8 +182,7 @@ a size). `SITE_*` codes come with their own message: relay it.
 
 - Size in dollars and leverage together: "a $150 ETH long with $50 of your money, at 3x".
 - Approval cards: what it does, then "approve it in the app".
-- A sign-up card: "it asks for your Variational access code: type it on the card, not here".
-  No code: someone who uses Variational, or https://discord.gg/variational (`references/setup.md`).
+- A sign-up card: "approve it in the app; it accepts Variational's Terms, no code needed".
 - After a close or withdrawal: what the outcome says, and nothing else.
 - After a deposit or withdrawal, a gap the size of the card's fee is Variational's fee:
   say so, never call it missing money.
