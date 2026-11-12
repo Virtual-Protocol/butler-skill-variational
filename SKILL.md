@@ -1,7 +1,7 @@
 ---
 name: variational
 description: "Look up or trade on Variational Omni from Butler's wallet: balance, positions and orders (read live, never from memory), deposit, open, close, limit, TP/SL, cancel, withdraw, each act a card."
-version: 2.1.0
+version: 2.1.1
 metadata: {"butler":{"moneyMoving":true,"keywords":["variational","variational omni","omni.variational.io","trade on variational","long on variational","short on variational","variational position","close my variational","variational balance","variational account","variational orders","deposit to variational","withdraw from variational","variational limit order","variational take profit","variational stop loss","cancel variational order"],"requires":{"bins":["acp","bevo-read"]}}}
 ---
 
@@ -35,9 +35,9 @@ this skill says which action fits an ask and what Variational's answers mean.
    ("13% below the mark", "closer"). A long's liquidation price rising is it coming closer.
 3. **Leverage is 1 to 5, and 1 unless they name one.** An open sets the leverage for the
    whole market, so it re-levers a position already open there: say so.
-4. **No access code, ever.** The server fills it in on the `signup` card; your owner only
-   approves it (`references/setup.md`). Never ask for one, never repeat one they paste, and
-   never put one in a command.
+4. **No access code, ever.** Variational needs none, and the server handles one if it ever
+   asks; your owner only approves the `signup` card (`references/setup.md`). Never ask for
+   one, never repeat one they paste, and never put one in a command.
 5. **From chat only.** A duty is refused (`SITE_DUTY_NOT_ALLOWED`).
 6. **You never touch Omni's page.** No browser, no wallet connection, no clicks: the server
    runs every step.

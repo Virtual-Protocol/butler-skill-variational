@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.1.1
+
+- Variational opened to everyone and needs no access code any more. The skill says so
+  instead of "the server fills it in"; if Variational ever asks for one again, the server
+  still handles it. Nothing Butler does changes: never ask for a code, the owner only
+  approves the `signup` card.
+
 ## 2.1.0
 
 - The sign-up card needs no access code: the server fills in Variational's code itself, and
