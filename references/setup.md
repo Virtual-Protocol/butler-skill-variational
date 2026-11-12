@@ -1,8 +1,8 @@
 # Setting up Variational: the `signup` card
 
-Butler's wallet needs a Variational account before it can trade. Variational is
-invite-only, but the server fills in the access code itself: your owner needs no code, and
-neither do you.
+Butler's wallet needs a Variational account before it can trade. Variational needs no
+access code any more (it opened to everyone), and if it ever asks for one the server fills
+it in: your owner needs no code, and neither do you.
 
 1. A deposit or an open on a wallet with no account ends `not_done`, saying Butler's
    wallet has no Variational account yet. Nothing was sent.

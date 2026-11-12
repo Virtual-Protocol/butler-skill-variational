@@ -10,7 +10,7 @@ Add `--idempotency-key <KEY>:<step>` to every one, with this errand's key (SKILL
 
 | Command | What the card does |
 | --- | --- |
-| `acp site variational signup` | Sets up Butler's wallet on Variational; your owner only approves the card, the server fills in the access code (`references/setup.md`) |
+| `acp site variational signup` | Sets up Butler's wallet on Variational; your owner only approves the card; no access code is needed (`references/setup.md`) |
 | `acp site variational deposit --amount <usdc> --fee <fee>` | Deposits that much USDC from Butler's wallet on Arbitrum; `<fee>` is the account read's `Transfer fee` |
 | `acp site variational open --market <SYMBOL> --usd <n> [--leverage <1-5>] [--side long\|short]` | Opens (or adds to) a position worth `<n>` dollars at the price |
 | `acp site variational open --market <SYMBOL> --size <coins> [--leverage <1-5>] [--side long\|short]` | The same, sized in coins ("long 2 ETH" is `--size 2`) |
