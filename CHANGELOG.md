@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.1.0
+
+- The sign-up card needs no access code: the server fills in Variational's code itself, and
+  the owner only approves the card (it accepts Variational's Terms). Butler never asks for a
+  code, and no longer points owners at Variational's Discord.
+- A failed sign-up is one answer, "Couldn't set up Variational right now": try again later,
+  only when the owner asks.
+- Needs the server that fills in the code; on an older one the card still asks for it.
+
 ## 2.0.9
 
 - An owner with no access code is told where one comes from: someone who uses Variational,

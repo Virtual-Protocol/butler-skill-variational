@@ -14,7 +14,7 @@ key (SKILL.md § Idempotency and retries): `var:eth:long:150usd:20261027-1244:de
    not, say so and stop here, before any card.
 2. Check Butler's USDC on Arbitrum (`SKILL.md` step 2). Short: offer a bridge, and only
    once they agree.
-3. `signup`: your owner types the access code on its card. Wait for `done`.
+3. `signup`: your owner approves its card (no code needed). Wait for `done`.
 4. `deposit`. Wait for `done`.
 5. `account` again, then `open`. Three cards in all: say so before the first.
 
